@@ -9,8 +9,9 @@ sc = SparkContext(conf=conf)
 def converPostToPair(post):
     tuple = ET.fromstring(post)
     key = tuple.get('OwnerUserId')
-    favoriteCount = float(tuple.get('FavoriteCount', '0'))
-    value = (float(1), favoriteCount)
+    favoriteCount = float(tuple.get('FavoriteCount', '0')) #default favorite value is 0.
+    viewCount = float(tuple.get('ViewCount', '0')) #default view count value is 0.
+    value = (float(1), favoriteCount, viewCount) # (post occurance count, fav. count)
     return (key, value)
 
 def createUserPair(user):
@@ -31,8 +32,8 @@ postPair = posts.filter(lambda x : all(ord(c) < 128 for c in x)).map(converPostT
 
 joinedData = userPair.join(postPair)
 
-# Gives out : (userid, total upvotes of user / total post of user, reputation, total favoriteCount, total fav. count / total posts)
-finalData = joinedData.map(lambda x : (x[0], x[1][0][0] / x[1][1][0], x[1][0][1], x[1][1][1], x[1][1][1] / x[1][1][0]))
+# Gives out : (userid, total upvotes of user / total posts of user, reputation, total favoriteCount, total fav. count / total posts, total view count / total posts)
+finalData = joinedData.map(lambda x : (x[0], x[1][0][0] / x[1][1][0], x[1][0][1], x[1][1][1], x[1][1][1] / x[1][1][0], x[1][1][2] / x[1][1][0]))
 
 Logger = sc._jvm.org.apache.log4j.Logger
 myLogger = Logger.getLogger(__name__)
