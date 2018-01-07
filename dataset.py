@@ -1,6 +1,9 @@
 from pyspark import SparkConf, SparkContext
+from pyspark.mllib.clustering import KMeans, KMeansModel
+
 import xml.etree.ElementTree as ET
 import operator
+
 
 conf = SparkConf().setAppName("My App")
 
@@ -33,7 +36,11 @@ postPair = posts.filter(lambda x : all(ord(c) < 128 for c in x)).map(converPostT
 joinedData = userPair.join(postPair)
 
 # Gives out : (userid, total upvotes of user / total posts of user, reputation, total favoriteCount, total fav. count / total posts, total view count / total posts)
-finalData = joinedData.map(lambda x : (x[0], x[1][0][0] / x[1][1][0], x[1][0][1], x[1][1][1], x[1][1][1] / x[1][1][0], x[1][1][2] / x[1][1][0]))
+finalData = joinedData.map(lambda x : (x[1][0][0] / x[1][1][0], x[1][0][1], x[1][1][1], x[1][1][1] / x[1][1][0], x[1][1][2] / x[1][1][0]))
+
+clusters = KMeans.train()
 
 Logger = sc._jvm.org.apache.log4j.Logger
 myLogger = Logger.getLogger(__name__)
+
+
