@@ -1,4 +1,5 @@
 from pyspark import SparkConf, SparkContext
+from pyspark.mllib.clustering import KMeans, KMeansModel
 import xml.etree.ElementTree as ET
 import operator
 
