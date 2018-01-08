@@ -1,5 +1,7 @@
 from pyspark import SparkConf, SparkContext
 from pyspark.mllib.clustering import KMeans, KMeansModel
+from numpy import array
+from math import sqrt
 import xml.etree.ElementTree as ET
 import operator
 
