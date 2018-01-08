@@ -42,10 +42,12 @@ def error(point):
     center = clusters.centers[clusters.predict(point)]
     return sqrt(sum([x**2 for x in (point - center)]))
 
+errorList = []
 
-for k in range(3, 15):
+for k in range(3, 20):
     clusters = KMeans.train(finalData, k, maxIterations=100, initializationMode="random")
     WSSSE = finalData.map(lambda point: error(point)).reduce(lambda x, y: x + y)
+    errorList.append((k, WSSSE))
 
 Logger = sc._jvm.org.apache.log4j.Logger
 myLogger = Logger.getLogger(__name__)
